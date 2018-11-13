@@ -1,3 +1,5 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #include "CSmtp.h"
 #include <iostream>
 
@@ -24,7 +26,13 @@ void SendEmail(char **server, char** login, char** password, int* port, char** r
 		mail.SetXPriority(XPRIORITY_NORMAL);
 		if ((*body != NULL) && (*body[0] != '\0')) mail.AddMsgLine(*body);
 		else throw "Body isn't set";
-		if ((*attachPath != NULL) && (*attachPath[0] != '\0')) mail.AddAttachment(*attachPath);
+		char* token = strtok(*attachPath, ",");
+		while(token != NULL)
+		{
+			if ((token[0] != '\0')) mail.AddAttachment(token);
+			token = strtok(NULL, ",");
+		}
+		/*if ((*attachPath != NULL) && (*attachPath[0] != '\0')) mail.AddAttachment(*attachPath);*/
 		mail.Send();
 		*result = "Sending was successfull";
 	}
